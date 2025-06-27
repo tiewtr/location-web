@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Location Tool</title>
+    <style>
+        body { font-family: Arial; padding: 20px; max-width: 600px; margin: auto; }
+        button { padding: 10px 20px; margin: 10px; cursor: pointer; }
+        pre { background: #f0f0f0; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h2>Get Your Location</h2>
+    <button onclick="getLocationGPS()">📍 GPS Location</button>
+    <button onclick="getLocationFromIP()">🌐 IP-based Location</button>
+    <pre id="output">Click a button to get your location...</pre>
+    <script>
+        function getLocationGPS() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    pos => {
+                        const lat = pos.coords.latitude;
+                        const lon = pos.coords.longitude;
+                        document.getElementById("output").innerText =
+                          `📍 GPS Location:\nLatitude: ${lat}\nLongitude: ${lon}\n\n🔗 Google Maps: https://maps.google.com/?q=${lat},${lon}`;
+                    },
+                    () => document.getElementById("output").innerText = "❌ GPS access denied or unavailable."
+                );
+            } else {
+                document.getElementById("output").innerText = "❌ Geolocation not supported by browser.";
+            }
+        }
+        async function getLocationFromIP() {
+            try {
+                const r = await fetch("https://ipapi.co/json/");
+                const d = await r.json();
+                document.getElementById("output").innerText =
+`🌐 IP-Based Location:
+IP: ${d.ip}
+City: ${d.city}
+Region: ${d.region}
+Country: ${d.country_name}
+Latitude: ${d.latitude}
+Longitude: ${d.longitude}
+🔗 Google Maps: https://maps.google.com/?q=${d.latitude},${d.longitude}`;
+            } catch (e) {
+                document.getElementById("output").innerText = "❌ Error fetching IP location: " + e;
+            }
+        }
+    </script>
+</body>
+</html>
