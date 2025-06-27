@@ -1,53 +1,38 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="th">
 <head>
-    <title>User Location Tool</title>
-    <style>
-        body { font-family: Arial; padding: 20px; max-width: 600px; margin: auto; }
-        button { padding: 10px 20px; margin: 10px; cursor: pointer; }
-        pre { background: #f0f0f0; padding: 10px; }
-    </style>
+  <meta charset="UTF-8">
+  <title>แบบฟอร์มส่งข้อมูลไปยัง Google Sheet</title>
 </head>
 <body>
-    <h2>Get Your Location</h2>
-    <button onclick="getLocationGPS()">📍 GPS Location</button>
-    <button onclick="getLocationFromIP()">🌐 IP-based Location</button>
-    <pre id="output">Click a button to get your location...</pre>
-    <script>
-        function getLocationGPS() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    pos => {
-                        const lat = pos.coords.latitude;
-                        const lon = pos.coords.longitude;
-                        document.getElementById("output").innerText =
-                          `📍 GPS Location:\nLatitude: ${lat}\nLongitude: ${lon}\n\n🔗 Google Maps: https://maps.google.com/?q=${lat},${lon}`;
-                    },
-                    () => document.getElementById("output").innerText = "❌ GPS access denied or unavailable."
-                );
-            } else {
-                document.getElementById("output").innerText = "❌ Geolocation not supported by browser.";
-            }
-        }
-        async function getLocationFromIP() {
-            try {
-                const r = await fetch("https://ipapi.co/json/");
-                const d = await r.json();
-                document.getElementById("output").innerText =
-`🌐 IP-Based Location:
-IP: ${d.ip}
-City: ${d.city}
-Region: ${d.region}
-Country: ${d.country_name}
-Latitude: ${d.latitude}
-Longitude: ${d.longitude}
-🔗 Google Maps: https://maps.google.com/?q=${d.latitude},${d.longitude}`;
-            } catch (e) {
-                document.getElementById("output").innerText = "❌ Error fetching IP location: " + e;
-            }
-        }
-    </script>
+
+  <h2>กรอกข้อมูล</h2>
+  <form id="myForm">
+    <input type="text" id="username" name="username" placeholder="ชื่อผู้ใช้" required />
+    <button type="submit">ส่งข้อมูล</button>
+  </form>
+
+  <script>
+    document.getElementById("myForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const username = document.getElementById("username").value;
+
+      const response = await fetch("https://script.google.com/macros/s/AKfycbxv0ETQZPtpfeJ2DIRChKgx-Vcz4NrAeYx08CmcAvcVVJDkDSUkRhCB9AZWfuyRRSfRBQ/exec", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: new URLSearchParams({ username })
+      });
+
+      if (response.ok) {
+        alert("ส่งข้อมูลเรียบร้อย!");
+      } else {
+        alert("เกิดข้อผิดพลาดในการส่งข้อมูล");
+      }
+    });
+  </script>
+
 </body>
 </html>
-https://script.google.com/macros/s/AKfycbxfJasqJmJS_kev2sADvY-aPLFRR3fOjPkHW4NQMDeZD7A4guqejBuuDf2HSI-j7Kferg/exec
